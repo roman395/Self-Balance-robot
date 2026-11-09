@@ -62,10 +62,10 @@ class Motor
 private:
     uint8_t positivePin;
     uint8_t negativePin;
-    int16_t speed;
+    float speed;
     MotorDirection direction;
     BrakeMode brakeMode;
-    uint8_t minPWM = 40;
+    uint8_t minPWM = 50;
     void update()
     {
         if (speed == 0)
@@ -122,9 +122,9 @@ public:
         update();
         return *this;
     }
-    Motor &setSpeed(int16_t spd)
+    Motor &setSpeed(float spd)
     {
-        speed = spd;
+        speed = constrain(spd, -255.0f, 255.0f);
         update();
         return *this;
     }

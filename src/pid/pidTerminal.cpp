@@ -8,7 +8,7 @@ PIDTerminal::PIDTerminal(Stream &serial, PIDController &controller)
 
 void PIDTerminal::begin()
 {
-    serial.println(F("PID commands: kp <value>, ki <value>, kd <value>, pid <p> <i> <d>, show, help"));
+    serial.println(F("PID commands: kp <value>, ki <value>, kd <value>, pid <p> <i> <d>, target <angle>, show, help"));
     show();
 }
 
@@ -20,7 +20,9 @@ void PIDTerminal::show()
     serial.print(F(" Ki="));
     serial.print(gains.getKi(), 6);
     serial.print(F(" Kd="));
-    serial.println(gains.getKd(), 6);
+    serial.print(gains.getKd(), 6);
+    serial.print(F(" Target="));
+    serial.println(controller.getSetpoint(), 6);
 }
 
 void PIDTerminal::update()
@@ -76,7 +78,8 @@ void PIDTerminal::execute()
     bool p = !strcmp(command, "kp");
     bool i = !strcmp(command, "ki");
     bool d = !strcmp(command, "kd");
-    if (!all && !p && !i && !d)
+    bool target = !strcmp(command, "target");
+    if (!all && !p && !i && !d && !target)
     {
         serial.println(F("Error: unknown command. Type help."));
         return;
@@ -102,6 +105,13 @@ void PIDTerminal::execute()
     if (strtok(nullptr, " \t"))
     {
         serial.println(F("Error: too many values."));
+        return;
+    }
+
+    if (target)
+    {
+        controller.setSetpoint(values[0]);
+        show();
         return;
     }
 

@@ -9,7 +9,7 @@ MPU6500 mpu = MPU6500();
 MotorDriver motorDriver = MotorDriver(3, 9, 10, 11);
 Motor motorLeft = Motor(motorDriver, 1);
 Motor motorRight = Motor(motorDriver, 2);
-PIDCoefficients pidCoeffs = PIDCoefficients(0.0f, 0.0f, 0.0f);
+PIDCoefficients pidCoeffs = PIDCoefficients(-20.0f, 0.0f, -0.5f);
 PIDController pid = PIDController(pidCoeffs);
 PIDTerminal pidTerminal = PIDTerminal(Serial, pid);
 void setup()
@@ -19,12 +19,12 @@ void setup()
     Serial.println("MPU6500 не отвечает");
   motorLeft.setDirection(REVERSE).setSpeed(0).setBreakingMode(BRAKE);
   motorRight.setDirection(FORWARD).setSpeed(0).setBreakingMode(BRAKE);
+  pid.setSetpoint(0.3f);
   pidTerminal.begin();
-  pid.setSetpoint(0.0f);
 }
 
 void loop()
-{/*
+{
   pidTerminal.update();
   updateAngle(mpu.getAcceleration().getXa(), mpu.getAcceleration().getZa(), mpu.getAngleSpeed().getYg());
   float angle = getAngle();
@@ -39,7 +39,5 @@ void loop()
     Serial.println(power);
   }
   motorLeft.setSpeed(power);
-  motorRight.setSpeed(power);*/
-  motorLeft.setSpeed(40);
-  motorRight.setSpeed(40);
+  motorRight.setSpeed(power);
 }

@@ -84,6 +84,10 @@ public:
     {
         return compute(target, measuredValue, currentTime);
     }
+    float getSetpoint() const
+    {
+        return target;
+    }
     void setSetpoint(float setpoint)
     {
         target = setpoint;
