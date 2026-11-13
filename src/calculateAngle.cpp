@@ -6,10 +6,11 @@ float gyroOffsetY = 0; // Подставь среднее gy неподвижн�
 unsigned long previousTime = 0;
 bool initialized = false;
 
-void updateAngle(float ax, float az, float gy)
+void updateAngle(float axForward, float azUp, float gyLeft)
 {
     uint32_t now = micros();
-    float accelAngle = atan2(-ax, az) * RAD_TO_DEG;
+    // Forward lean gives negative X acceleration and positive rotation about +Y.
+    float accelAngle = atan2(-axForward, azUp) * RAD_TO_DEG;
 
     if (!initialized)
     {
@@ -25,7 +26,7 @@ void updateAngle(float ax, float az, float gy)
     const float tau = 0.5f; // Начальная настройка фильтра, секунды
     float alpha = tau / (tau + dt);
 
-    float gyroAngle = angle + (gy - gyroOffsetY) * dt;
+    float gyroAngle = angle + (gyLeft - gyroOffsetY) * dt;
     angle = alpha * gyroAngle + (1.0f - alpha) * accelAngle;
 }
 float getAngle()
